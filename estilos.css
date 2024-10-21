@@ -26,7 +26,8 @@ body{
     flex-direction: column;
     align-items: center;
     justify-content:space-around;
-    width: 450px;
+    width: 500px;
+    max-width: 500px;
     min-height: 200px;
     padding: 10px;
     background: white;
@@ -36,18 +37,23 @@ body{
 
 .Titulo{
     font-weight: 900;
-    text-shadow: 2px 2px 2px hotpink;
+    text-shadow: 2px 2px 2px rgb(233, 212, 222);
     margin: 10px 0 20px 0;
 }
 
+
 h3{
+    display: flex;
     font-weight: 500;
-    max-width: 315px;
+    max-width: 300px;
+    padding-right: 2%;
+    flex-wrap: wrap;
 }
 
 .tarea{
     border-top: 3px solid pink;
-    min-width: 400px;
+    min-width: 450px;
+    max-width: 470px;
     padding: 10px 5px 10px 5px;
     display: flex;
     justify-content: space-between;
@@ -55,8 +61,18 @@ h3{
     transition: background 0.25s;
 }
 
-.tarea:hover{
+.palh3{
+    display: flex;
+    
+    width: clamp(340px, 340px, 340px);
+}
+
+.tarea:hover {
     background: pink;
+}
+
+.tarea:hover #drop {
+    background-color: pink;
 }
 
 input{
@@ -64,7 +80,7 @@ input{
     padding-left: 5px;
     font-size: 1.15rem;
     font-weight: 500;
-    width: 72%;
+    width: 100%;
     border: 2px solid gray;
     border-radius: 5px;
     transition: background 0.25s;
@@ -72,6 +88,11 @@ input{
 
 input:hover{
     box-shadow: 0 2px 4px 2px hotpink;
+}
+
+.botones{
+    min-width: 115px;
+    padding: 2px;
 }
 
 .botones button{
@@ -105,4 +126,14 @@ input:hover{
     background:rgb(223, 168, 195);
     cursor:pointer;
     color: white;
+}
+
+#drop{
+    padding: 5px;
+    min-width: 30px;
+    max-width: 20px;
+    border: none;
+    border-radius: 3px;
+    background: white;
+    transition: background .30s;
 }
