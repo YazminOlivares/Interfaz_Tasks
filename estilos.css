@@ -63,7 +63,7 @@ h3{
 
 .palh3{
     display: flex;
-    
+    align-items: center;
     width: clamp(340px, 340px, 340px);
 }
 
@@ -134,6 +134,28 @@ input:hover{
     max-width: 20px;
     border: none;
     border-radius: 3px;
+    font-size: 1.3rem;
     background: white;
     transition: background .30s;
+}
+
+#drop:hover{
+    color: white;
+}
+
+.detalles p{
+    padding: 4px 0;
+}
+
+
+.detalles {
+    text-align: left;
+    padding: 0 20px;
+    overflow: hidden; /* Evita que el contenido desborde */
+    max-height: 0; /* Comienza con altura 0 */
+    transition: max-height 0.5s ease; /* Transición suave para la altura */
+}
+
+.detalles.show {
+    max-height: 500px; 
 }
