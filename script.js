@@ -25,15 +25,14 @@ function agregar() {
     escribir.addEventListener('keydown', function(event) { // Añade un evento para detectar cuando el usuario presiona una tecla
         if (event.key === 'Enter') { // Verifica si la tecla presionada es 'Enter'
             
+            var editado = false;
             const texto = escribir.value; // Obtiene el valor del campo de texto (la tarea escrita)
 
             const tituloTarea = document.createElement('h3'); // Crea un elemento h3 para mostrar el título de la tarea
 
-            const pInvisible = document.createElement('p'); //Crea una etiqueta P
-            pInvisible.hidden = true;
-            pInvisible.innerText = 'Aqui se pone el id de la tarea.'; //Esta tendría como valor el ID de la tarea generado por la API
 
             tituloTarea.addEventListener('dblclick', function(e) { // Añade un evento al h3 para que al hacer doble clic permita editar la tarea
+                editado = true;
                 const texto2 = tituloTarea.innerText; // Obtiene el texto del h3 actual
                 escribir.value = texto2; // Copia el texto actual en el campo de entrada para permitir su edición
                 boton1.innerText = '✔'; // Cambia el texto del botón a '✔' para indicar que la tarea no está marcada
@@ -44,6 +43,13 @@ function agregar() {
             tituloTarea.innerText = texto; // Asigna el texto del campo de entrada al h3
             desplegar.style.display = 'inline'; // Muestra de nuevo el botón desplegar al finalizar la edición
             palh3.replaceChild(tituloTarea, escribir); // Reemplaza el campo de entrada con el h3 (mostrar tarea)
+
+            if ( editado == false){
+                createTask(texto);
+            }else{
+                console.log("Para editar titulo")
+            }
+            
         }
     });
 
@@ -52,104 +58,8 @@ function agregar() {
     boton1.setAttribute('id', 'marcar'); // Asigna el id 'marcar' al botón
     boton1.innerText = '✔'; // Establece el texto del botón a '✔'
 
-    boton1.addEventListener('click', function() { // Añade un evento al botón para marcar o desmarcar la tarea
-        const tar = palh3.querySelector('h3'); // Selecciona el h3 dentro del div 'palh3'
-        if (tar) { // Si existe el h3
-            if (tar.style.textDecoration === 'line-through') { // Si el texto tiene un tachado (marcado como completado)
-                tar.style.textDecoration = ''; // Elimina el tachado
-                tar.style.color = ''; // Restablece el color del texto
-                boton1.innerText = '✔'; // Cambia el texto del botón a '✔'
 
-            } else { // Si no está marcado como completado
-                tar.style.textDecoration = 'line-through'; // Tacha el texto (marcar como completado)
-                tar.style.color = 'gray'; // Cambia el color del texto a gris
-                boton1.innerText = '↺'; // Cambia el texto del botón a '↺' (desmarcar)
-            }
-        }
-    });
-
-    const boton2 = document.createElement('button'); // Crea el segundo botón (para editar la tarea)
-    boton2.setAttribute('class', 'botoncito'); // Asigna la clase 'botoncito' al botón
-    boton2.setAttribute('id', 'editar'); // Asigna el id 'editar' al botón
-    boton2.innerText = '✎'; // Establece el texto del botón a '✎' (editar)
-
-    boton2.addEventListener('click', function() { // Añade un evento al botón para editar la tarea
-        const editar = palh3.querySelector('h3'); // Selecciona el h3 dentro del div 'palh3'
-
-        if (editar) { // Si existe el h3
-            const texto = editar.innerText; // Obtiene el texto actual del h3
-            const inputEditar = document.createElement('input'); // Crea un nuevo campo de texto para editar la tarea
-            inputEditar.value = texto; // Establece el valor del campo de texto con el texto actual
-
-            inputEditar.addEventListener('keydown', function(event) { // Añade un evento para detectar cuando se presiona una tecla
-                if (event.key === 'Enter') { // Verifica si la tecla presionada es 'Enter'
-                    const nuevoTexto = inputEditar.value; // Obtiene el valor del campo de texto editado
-                    const nuevoEditar = document.createElement('h3'); // Crea un nuevo h3 para mostrar el texto editado
-                    nuevoEditar.innerText = nuevoTexto; // Establece el nuevo texto en el h3
-
-                    boton1.innerText = '✔'; // Cambia el texto del botón a '✔'
-                    desplegar.style.display = 'inline'; // Muestra el botón desplegar nuevamente
-                    palh3.replaceChild(nuevoEditar, inputEditar); // Reemplaza el campo de texto con el nuevo h3
-                }
-            });
-            desplegar.style.display = 'none'; // Oculta el botón desplegar mientras se edita
-            palh3.replaceChild(inputEditar, editar); // Reemplaza el h3 con el campo de texto para editar la tarea
-        }
-    });
-
-    const boton3 = document.createElement('button'); // Crea el tercer botón (para eliminar la tarea)
-    boton3.setAttribute('class', 'botoncito'); // Asigna la clase 'botoncito' al botón
-    boton3.setAttribute('id', 'eliminar'); // Asigna el id 'eliminar' al botón
-    boton3.innerText = '✘'; // Establece el texto del botón a '✘' (eliminar)
-    boton3.addEventListener('click', function() { // Añade un evento al botón para eliminar la tarea
-        agregarTarea.remove(); // Elimina el div de la tarea del DOM
-    });
-
-    const botones = document.createElement('div'); // Crea un div para agrupar los botones de la tarea
-    botones.setAttribute('class', 'botones'); // Asigna la clase 'botones' al div
-
-    botones.append(boton1); // Añade el botón de marcar al div de botones
-    botones.append(boton2); // Añade el botón de editar al div de botones
-    botones.append(boton3); // Añade el botón de eliminar al div de botones
-
-    const detalles = document.createElement('div'); //lksndflkn
-    detalles.setAttribute('class', 'detalles');
-
-    /* Ejemplo de como meter los datos en los detalles */
-    /* const detalle1 = document.createElement('p');
-    detalle1.innerText = 'Detalle1';
-    detalles.append(detalle1);
-    const detalle2 = document.createElement('p');
-    detalle2.innerText = 'Detalle2';
-    detalles.append(detalle2); */
-
-    desplegar.addEventListener('click', ()=>{
-        let id = agregarTarea.getAttribute('id')
-        toggleVisibility(detalles, desplegar);
-        console.log(id);
-    });
-
-    const toggleVisibility = (detalles, desplegar) => {
-        if (detalles.classList.contains("show")) {
-            detalles.classList.remove("show");
-            desplegar.setAttribute('class', 'fa-solid fa-chevron-down');
-        } else {
-            detalles.classList.add("show");
-            desplegar.setAttribute('class', 'fa-solid fa-chevron-up');
-        }
-    }; 
-
-    palh3.append(desplegar); // Añade el botón desplegar
-    palh3.append(escribir); // Añade el campo de texto para escribir la tarea al div 'palh3'
-
-    agregarTarea.append(palh3); // Añade el div 'palh3' al div de la tarea
-    agregarTarea.append(botones); // Añade el div con los botones al div de la tarea
-
-    agregarTarea.setAttribute('id', `Id${contador}`); // Asigna un id único a la tarea, basado en el contador
-    info.append(agregarTarea);
-    info.append(detalles);
-    contenedor.append(info); // Añade la tarea al contenedor de tareas en el DOM
-    contador++; // Incrementa el contador para el próximo id de tarea
+    botones(desplegar, palh3, escribir, agregarTarea, info, boton1, "agregar");
 }
 
 async function obtener() {
@@ -232,6 +142,14 @@ function llenar(tarea) {
     boton1.setAttribute('id', 'marcar'); // Asigna el id 'marcar' al botón
     boton1.innerText = '✔'; // Establece el texto del botón a '✔'
 
+    agregarTarea.setAttribute('id', tarea.id); // Asigna un id único a la tarea, basado en el contador
+
+    botones(desplegar, palh3, escribir, agregarTarea, info, boton1, "llenar", tarea);
+}
+
+
+function botones( desplegar, palh3, escribir, agregarTarea, info, boton1, nombreFun, tarea){
+
     boton1.addEventListener('click', function() { // Añade un evento al botón para marcar o desmarcar la tarea
         const tar = palh3.querySelector('h3'); // Selecciona el h3 dentro del div 'palh3'
         if (tar) { // Si existe el h3
@@ -295,12 +213,61 @@ function llenar(tarea) {
     const detalles = document.createElement('div'); //lksndflkn
     detalles.setAttribute('class', 'detalles');
 
-    const detalle1 = document.createElement('p');
-    detalle1.innerText = tarea.description;
-    detalles.append(detalle1);
-    /*const detalle2 = document.createElement('p');
-    detalle2.innerText = 'Detalle2';
-    detalles.append(detalle2); */
+    if (nombreFun == "llenar"){
+
+        const detalle1 = document.createElement('p');
+        detalle1.innerText = tarea.description;
+        detalles.append(detalle1);
+
+        detalle1.addEventListener('dblclick', function(e) { // Añade un evento al h3 para que al hacer doble clic permita editar la tarea
+            console.log("entra");
+            const texto2 = detalle1.innerText; // Obtiene el texto del h3 actual
+            const escribir2 = document.createElement('input');
+            escribir2.value = texto2; // Copia el texto actual en el campo de entrada para permitir su edición
+            detalles.replaceChild(escribir2, detalle1); // Reemplaza el h3 por el campo de texto para editar la tarea
+    
+            escribir2.addEventListener('keydown', function(event) { // Añade un evento para detectar cuando el usuario presiona una tecla
+                if (event.key === 'Enter') { // Verifica si la tecla presionada es 'Enter'
+                    
+                    const texto = escribir2.value; // Obtiene el valor del campo de texto (la tarea escrita)
+
+                    detalle1.addEventListener('dblclick', function(e) { // Añade un evento al h3 para que al hacer doble clic permita editar la tarea
+                        const texto2 = detalle1.innerText; // Obtiene el texto del h3 actual
+                        escribir2.value = texto2; // Copia el texto actual en el campo de entrada para permitir su edición
+                        detalles.replaceChild(escribir2, detalle1); // Reemplaza el h3 por el campo de texto para editar la tarea
+                    });
+        
+                    detalle1.innerText = texto; // Asigna el texto del campo de entrada al h3
+                    detalles.replaceChild(detalle1, escribir2); // Reemplaza el campo de entrada con el h3 (mostrar tarea)
+        
+                }
+            });
+        });
+
+    }else{
+
+        const detalle1 = document.createElement('input');
+        detalles.append(detalle1);
+
+        detalle1.addEventListener('keydown', function(event) { 
+            if (event.key === 'Enter') { 
+                
+                const texto = detalle1.value; 
+    
+                const desTarea = document.createElement('h3'); 
+    
+                desTarea.addEventListener('dblclick', function(e) { 
+                    const texto2 = desTarea.innerText; 
+                    detalle1.value = texto2; 
+                    detalles.replaceChild(detalle1, desTarea); 
+                });
+    
+                desTarea.innerText = texto; 
+                detalles.replaceChild(desTarea, detalle1); 
+            }
+        });
+
+    }
 
     desplegar.addEventListener('click', ()=>{
         let id = agregarTarea.getAttribute('id')
@@ -324,9 +291,32 @@ function llenar(tarea) {
     agregarTarea.append(palh3); // Añade el div 'palh3' al div de la tarea
     agregarTarea.append(botones); // Añade el div con los botones al div de la tarea
 
-    agregarTarea.setAttribute('id', `Id${contador}`); // Asigna un id único a la tarea, basado en el contador
+    
     info.append(agregarTarea);
     info.append(detalles);
     contenedor.append(info); // Añade la tarea al contenedor de tareas en el DOM
-    contador++; // Incrementa el contador para el próximo id de tarea
+}
+
+async function createTask(titulo){
+    try {
+        const response = await fetch('http://localhost:3000/tasks/post', {
+            method: 'POST',
+            body: JSON.stringify({ 
+                title: titulo,
+                description: "Sin descripcion",
+                completed: false
+            }),
+          });
+
+        if (!response.ok) {
+            throw new Error('Error en la respuesta de la API');
+        }
+
+        const data = await response.json();
+        console.log(data)
+
+    } catch (error) {
+        
+        console.error('Error:', error);
+    }
 }
