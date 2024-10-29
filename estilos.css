@@ -185,3 +185,13 @@ input:hover{
 .detalles.show {
     max-height: 500px; 
 }
+
+.completed {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.pending {
+    background-color: #f8d7da;
+    color: #721c24;
+}

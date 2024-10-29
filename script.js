@@ -47,6 +47,7 @@ function agregar() {
                 const texto2 = tituloTarea.innerText; // Obtiene el texto del h3 actual
                 escribir.value = texto2; // Copia el texto actual en el campo de entrada para permitir su edición
                 boton1.innerText = '✔'; // Cambia el texto del botón a '✔' para indicar que la tarea no está marcada
+                actualizarTarea(tarea.id, false);
                 desplegar.style.display = 'none'; // Oculta el botón de desplegar al editar
                 palh3.replaceChild(escribir, tituloTarea); // Reemplaza el h3 por el campo de texto para editar la tarea
             });
@@ -151,6 +152,7 @@ function llenar(tarea) {
         const escribir2 = document.createElement('input');
         escribir2.value = texto2; // Copia el texto actual en el campo de entrada para permitir su edición
         boton1.innerText = '✔'; // Cambia el texto del botón a '✔' para indicar que la tarea no está marcada
+        actualizarTarea(tarea.id, false);
         desplegar.style.display = 'none'; // Oculta el botón de desplegar al editar
         palh3.replaceChild(escribir2, escribir); // Reemplaza el h3 por el campo de texto para editar la tarea
 
@@ -167,6 +169,7 @@ function llenar(tarea) {
                     const texto2 = escribir.innerText; // Obtiene el texto del h3 actual
                     escribir2.value = texto2; // Copia el texto actual en el campo de entrada para permitir su edición
                     boton1.innerText = '✔'; // Cambia el texto del botón a '✔' para indicar que la tarea no está marcada
+                    actualizarTarea(tarea.id, false);
                     desplegar.style.display = 'none'; // Oculta el botón de desplegar al editar
                     palh3.replaceChild(escribir2, escribir); // Reemplaza el h3 por el campo de texto para editar la tarea
                 });
@@ -182,7 +185,16 @@ function llenar(tarea) {
     const boton1 = document.createElement('button'); // Crea el primer botón (para marcar como completada)
     boton1.setAttribute('class', 'botoncito'); // Asigna la clase 'botoncito' al botón
     boton1.setAttribute('id', 'marcar'); // Asigna el id 'marcar' al botón
-    boton1.innerText = '✔'; // Establece el texto del botón a '✔'
+    console.log('Tarea completada? ', tarea.completed);
+    if(!tarea.completed){
+        escribir.style.textDecoration = ''; // Tacha el texto (marcar como completado)
+        escribir.style.color = ''; // Cambia el color del texto a gris
+        boton1.innerText = '✔'; // Establece el texto del botón a '✔'
+    }else{
+        escribir.style.textDecoration = 'line-through'; // Tacha el texto (marcar como completado)
+        escribir.style.color = 'gray'; // Cambia el color del texto a gris
+        boton1.innerText = '↺'; // Establece el texto del botón a '↺'
+    }
 
     agregarTarea.setAttribute('id', tarea.id); // Asigna un id único a la tarea, basado en el contador
 
@@ -191,6 +203,7 @@ function llenar(tarea) {
 
 
 function botones( desplegar, palh3, escribir, agregarTarea, info, boton1, nombreFun, tarea){
+    
     boton1.addEventListener('click', function() { // Añade un evento al botón para marcar o desmarcar la tarea
         const tar = palh3.querySelector('h3'); // Selecciona el h3 dentro del div 'palh3'
         if (tar) { // Si existe el h3
@@ -198,11 +211,12 @@ function botones( desplegar, palh3, escribir, agregarTarea, info, boton1, nombre
                 tar.style.textDecoration = ''; // Elimina el tachado
                 tar.style.color = ''; // Restablece el color del texto
                 boton1.innerText = '✔'; // Cambia el texto del botón a '✔'
-
+                actualizarTarea(tarea.id, false);
             } else { // Si no está marcado como completado
                 tar.style.textDecoration = 'line-through'; // Tacha el texto (marcar como completado)
                 tar.style.color = 'gray'; // Cambia el color del texto a gris
                 boton1.innerText = '↺'; // Cambia el texto del botón a '↺' (desmarcar)
+                actualizarTarea(tarea.id, true);
             }
         }
     });
@@ -229,6 +243,7 @@ function botones( desplegar, palh3, escribir, agregarTarea, info, boton1, nombre
                     boton1.innerText = '✔'; // Cambia el texto del botón a '✔'
                     desplegar.style.display = 'inline'; // Muestra el botón desplegar nuevamente
                     palh3.replaceChild(nuevoEditar, inputEditar); // Reemplaza el campo de texto con el nuevo h3
+                    actualizarTarea(tarea.id, false);
                 }
             });
             desplegar.style.display = 'none'; // Oculta el botón desplegar mientras se edita
@@ -384,6 +399,32 @@ async function deleteTask(id) {
             headers: {
                 'Content-Type': 'application/json'
             },
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error('Error en la respuesta de la API');
+        }
+
+        console.log(data);
+
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+async function actualizarTarea(id, boleano) {
+    console.log('id para actualizar: ', id);
+    try {
+        const response = await fetch(`http://localhost:3000/tasks/update2/${id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                completed: boleano
+            }),
         });
 
         const data = await response.json();
