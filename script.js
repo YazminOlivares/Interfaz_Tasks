@@ -261,10 +261,10 @@ function botones( desplegar, palh3, escribir, agregarTarea, info, boton1, nombre
     boton3.setAttribute('id', 'eliminar'); // Asigna el id 'eliminar' al botón
     boton3.innerText = '✘'; // Establece el texto del botón a '✘' (eliminar)
     boton3.addEventListener('click', function() { // Añade un evento al botón para eliminar la tarea
-
+        deleteTask(tarea.id);
+        detalles.remove();
         agregarTarea.remove(); // Elimina el div de la tarea del DOM
         console.log('id de la tarea borrada: ', tarea.id);
-        deleteTask(tarea.id);
     });
 
     const botones = document.createElement('div'); // Crea un div para agrupar los botones de la tarea
