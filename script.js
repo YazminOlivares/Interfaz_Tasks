@@ -6,16 +6,13 @@ let contador = 1; // Inicializa un contador para asignar un id único a cada tar
 
 const otroContenedor = document.getElementById('container');
 
-const barra = document.createElement('input');
-barra.setAttribute('class', 'Titulo');
-barra.setAttribute('placeholder', 'Buscar');
+const barra = document.getElementById('busqueda');
 barra.addEventListener('keydown', function(event){
     if(event.key === 'Enter'){
         console.log('busqueda');
         obtenerPorId();
     }
 });
-otroContenedor.append(barra);
 
 obtener();
 
@@ -194,7 +191,6 @@ function llenar(tarea) {
 
 
 function botones( desplegar, palh3, escribir, agregarTarea, info, boton1, nombreFun, tarea){
-
     boton1.addEventListener('click', function() { // Añade un evento al botón para marcar o desmarcar la tarea
         const tar = palh3.querySelector('h3'); // Selecciona el h3 dentro del div 'palh3'
         if (tar) { // Si existe el h3
@@ -229,7 +225,7 @@ function botones( desplegar, palh3, escribir, agregarTarea, info, boton1, nombre
                     const nuevoTexto = inputEditar.value; // Obtiene el valor del campo de texto editado
                     const nuevoEditar = document.createElement('h3'); // Crea un nuevo h3 para mostrar el texto editado
                     nuevoEditar.innerText = nuevoTexto; // Establece el nuevo texto en el h3
-
+                    
                     boton1.innerText = '✔'; // Cambia el texto del botón a '✔'
                     desplegar.style.display = 'inline'; // Muestra el botón desplegar nuevamente
                     palh3.replaceChild(nuevoEditar, inputEditar); // Reemplaza el campo de texto con el nuevo h3
@@ -245,7 +241,15 @@ function botones( desplegar, palh3, escribir, agregarTarea, info, boton1, nombre
     boton3.setAttribute('id', 'eliminar'); // Asigna el id 'eliminar' al botón
     boton3.innerText = '✘'; // Establece el texto del botón a '✘' (eliminar)
     boton3.addEventListener('click', function() { // Añade un evento al botón para eliminar la tarea
+        
+        const elh3 = document.getElementById(tarea.id); //Pa sacar el arbol genealógico
+        const textodeh3 = elh3.firstChild.lastChild; //Titulo de la tarea
+        const idTarea = tarea.id;
+        const descripcionh3 = elh3.parentNode.lastChild.firstChild; //Descripcion
+
         agregarTarea.remove(); // Elimina el div de la tarea del DOM
+        console.log('id de la tarea borrada: ', tarea.id);
+        deleteTask(tarea.id);
     });
 
     const botones = document.createElement('div'); // Crea un div para agrupar los botones de la tarea
@@ -357,6 +361,29 @@ async function createTask(titulo) {
                 description: "Sin descripcion",
                 completed: false
             }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error('Error en la respuesta de la API');
+        }
+
+        console.log(data);
+
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+async function deleteTask(id) {
+    console.log('id: ', id);
+    try {
+        const response = await fetch(`http://localhost:3000/tasks/delete/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
         });
 
         const data = await response.json();
