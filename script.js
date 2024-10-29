@@ -96,7 +96,7 @@ async function obtener() {
     }
 }
 
-async function obtenerPorId() { //No le he movido a esto, nomas copie y pegue el de obtener
+async function obtenerPorId() { 
 
     console.log("Buscar por id");
 
@@ -147,7 +147,7 @@ function llenar(tarea) {
     escribir.innerText = tarea.title;
 
     escribir.addEventListener('dblclick', function(e) { // Añade un evento al h3 para que al hacer doble clic permita editar la tarea
-        console.log("entra");
+
         const texto2 = escribir.innerText; // Obtiene el texto del h3 actual
         const escribir2 = document.createElement('input');
         escribir2.value = texto2; // Copia el texto actual en el campo de entrada para permitir su edición
@@ -177,7 +177,12 @@ function llenar(tarea) {
                 escribir.innerText = texto; // Asigna el texto del campo de entrada al h3
                 desplegar.style.display = 'inline'; // Muestra de nuevo el botón desplegar al finalizar la edición
                 palh3.replaceChild(escribir, escribir2); // Reemplaza el campo de entrada con el h3 (mostrar tarea)
-    
+                
+                const elh3 = document.getElementById(tarea.id); //Pa sacar el arbol genealógico
+                const textodeh3 = elh3.firstChild.lastChild; //Titulo de la tarea
+                const idTarea = tarea.id;
+                const descripcionh3 = elh3.parentNode.lastChild.firstChild; //Descripcion
+                actualizar(textodeh3.textContent,descripcionh3.textContent, false, idTarea);
             }
         });
     });
@@ -256,11 +261,6 @@ function botones( desplegar, palh3, escribir, agregarTarea, info, boton1, nombre
     boton3.setAttribute('id', 'eliminar'); // Asigna el id 'eliminar' al botón
     boton3.innerText = '✘'; // Establece el texto del botón a '✘' (eliminar)
     boton3.addEventListener('click', function() { // Añade un evento al botón para eliminar la tarea
-        
-        const elh3 = document.getElementById(tarea.id); //Pa sacar el arbol genealógico
-        const textodeh3 = elh3.firstChild.lastChild; //Titulo de la tarea
-        const idTarea = tarea.id;
-        const descripcionh3 = elh3.parentNode.lastChild.firstChild; //Descripcion
 
         agregarTarea.remove(); // Elimina el div de la tarea del DOM
         console.log('id de la tarea borrada: ', tarea.id);
@@ -303,7 +303,12 @@ function botones( desplegar, palh3, escribir, agregarTarea, info, boton1, nombre
         
                     detalle1.innerText = texto; // Asigna el texto del campo de entrada al h3
                     detalles.replaceChild(detalle1, escribir2); // Reemplaza el campo de entrada con el h3 (mostrar tarea)
-        
+                    
+                    const elh3 = document.getElementById(tarea.id); //Pa sacar el arbol genealógico
+                    const textodeh3 = elh3.firstChild.lastChild; //Titulo de la tarea
+                    const idTarea = tarea.id;
+                    const descripcionh3 = elh3.parentNode.lastChild.firstChild; //Descripcion
+                    actualizar(textodeh3.textContent,descripcionh3.textContent, false, idTarea);
                 }
             });
         });
@@ -363,7 +368,7 @@ function botones( desplegar, palh3, escribir, agregarTarea, info, boton1, nombre
 }
 
 async function createTask(titulo) {
-    console.log('titulo: ', titulo);
+
     try {
         const nombreUsuario = localStorage.getItem('usuario');
         const response = await fetch(`http://localhost:3000/tasks/post?usuario=${nombreUsuario}`, {
@@ -389,6 +394,10 @@ async function createTask(titulo) {
     } catch (error) {
         console.error('Error:', error);
     }
+
+    const todas = document.getElementById("tareas");
+    todas.innerHTML = "";
+    obtener();
 }
 
 async function deleteTask(id) {
@@ -444,3 +453,34 @@ const cerrar = document.getElementById('cSesion').addEventListener('click', () =
     localStorage.removeItem('sesionIniciada'); // Eliminar estado de sesión
     window.location.href = "inicio.html"; // Redirigir a la página de inicio de sesión
 });
+
+async function actualizar (titulo, descripcion, completado, id){
+    console.log(titulo);
+    try {
+        const nombreUsuario = localStorage.getItem('usuario');
+        const response = await fetch(`http://localhost:3000/tasks/update/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                title: titulo,
+                description: descripcion,
+                createdAt: new Date(),
+                completed: completado,
+                usuario: nombreUsuario
+            }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error('Error en la respuesta de la API');
+        }
+
+        console.log(data);
+
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
