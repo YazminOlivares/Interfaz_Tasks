@@ -3,6 +3,20 @@ const boton = document.getElementById('agregar'); // Selecciona el botón de agr
 boton.addEventListener('click', agregar); // Añade un evento al botón para ejecutar la función agregar() cuando se hace clic
 
 let contador = 1; // Inicializa un contador para asignar un id único a cada tarea
+
+const otroContenedor = document.getElementById('container');
+
+const barra = document.createElement('input');
+barra.setAttribute('class', 'Titulo');
+barra.setAttribute('placeholder', 'Buscar');
+barra.addEventListener('keydown', function(event){
+    if(event.key === 'Enter'){
+        console.log('busqueda');
+        obtenerPorId();
+    }
+});
+otroContenedor.append(barra);
+
 obtener();
 
 function agregar() {
@@ -44,7 +58,7 @@ function agregar() {
             desplegar.style.display = 'inline'; // Muestra de nuevo el botón desplegar al finalizar la edición
             palh3.replaceChild(tituloTarea, escribir); // Reemplaza el campo de entrada con el h3 (mostrar tarea)
 
-            if ( editado == false){
+            if (!editado){
                 createTask(texto);
             }else{
                 console.log("Para editar titulo")
@@ -63,8 +77,9 @@ function agregar() {
 }
 
 async function obtener() {
+    const nombreUsuario = localStorage.getItem('usuario');
     try {
-        const response = await fetch('http://localhost:3000/tasks');
+        const response = await fetch(`http://localhost:3000/tasks?usuario=${nombreUsuario}`);
 
         if (!response.ok) {
             throw new Error('Error en la respuesta de la API');
@@ -76,6 +91,38 @@ async function obtener() {
         data.map((tarea) => {
             llenar(tarea);
         });
+
+    } catch (error) {
+        
+        console.error('Error:', error);
+    }
+}
+
+async function obtenerPorId() { //No le he movido a esto, nomas copie y pegue el de obtener
+
+    console.log("Buscar por id");
+
+    const nombreUsuario = localStorage.getItem('usuario');
+    const elaidi = barra.value;
+
+    const info = document.getElementById('tareas');
+
+    console.log(nombreUsuario);
+    try {
+        const response = await fetch(`http://localhost:3000/tasks/${elaidi}?usuario=${nombreUsuario}`);
+
+        console.log(response);
+
+        if (!response.ok) {
+            throw new Error('Error en la respuesta de la API');
+        }
+
+        const data = await response.json();
+        console.log(data);
+        
+        info.innerHTML = '';
+
+        llenar(data);
 
     } catch (error) {
         
@@ -114,8 +161,6 @@ function llenar(tarea) {
             if (event.key === 'Enter') { // Verifica si la tecla presionada es 'Enter'
                 
                 const texto = escribir2.value; // Obtiene el valor del campo de texto (la tarea escrita)
-    
-                
     
                 const pInvisible = document.createElement('p'); //Crea una etiqueta P
                 pInvisible.hidden = true;
@@ -294,29 +339,40 @@ function botones( desplegar, palh3, escribir, agregarTarea, info, boton1, nombre
     
     info.append(agregarTarea);
     info.append(detalles);
+
     contenedor.append(info); // Añade la tarea al contenedor de tareas en el DOM
 }
 
-async function createTask(titulo){
+async function createTask(titulo) {
+    console.log('titulo: ', titulo);
     try {
-        const response = await fetch('http://localhost:3000/tasks/post', {
+        const nombreUsuario = localStorage.getItem('usuario');
+        const response = await fetch(`http://localhost:3000/tasks/post?usuario=${nombreUsuario}`, {
             method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify({ 
                 title: titulo,
                 description: "Sin descripcion",
                 completed: false
             }),
-          });
+        });
+
+        const data = await response.json();
 
         if (!response.ok) {
             throw new Error('Error en la respuesta de la API');
         }
 
-        const data = await response.json();
-        console.log(data)
+        console.log(data);
 
     } catch (error) {
-        
         console.error('Error:', error);
     }
 }
+
+const cerrar = document.getElementById('cSesion').addEventListener('click', () => {
+    localStorage.removeItem('sesionIniciada'); // Eliminar estado de sesión
+    window.location.href = "inicio.html"; // Redirigir a la página de inicio de sesión
+});

@@ -8,14 +8,25 @@
 </head>
 <img class="fondo" src="fondo.jpg" alt="fondo">
 <body> 
+
+    <script>
+        const nombreUsuario = localStorage.getItem('usuario');
+        console.log('Nombre de usuario: ', nombreUsuario);
+
+        if (!nombreUsuario) {
+            window.location.href = "inicio.html"; 
+        }
+    </script>
     
-    <div class="container">
+    <div class="container" id="container">
         <h1 class="Titulo">Lista de tareas</h1>
         <div class="tareas" id="tareas">
             
         </div>
         <button id="agregar">+ Agregar una tarea</button>
     </div>
+
+    <button id="cSesion">Cerrar Sesión</button>
 
 </body>
 
